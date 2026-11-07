@@ -1,12 +1,173 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import {createHmac} from 'node:crypto';
-import {verifyPurchase,extractReceipt} from '../public/engine.mjs';
-import {createApplication} from '../server.mjs';
-import {validSignature,createWhatsApp} from '../lib/whatsapp.mjs';
-import {createStore} from '../lib/store.mjs';
-const purchase={itemId:'veg-meal',amount:150,quantity:1,category:'mail-express',brand:'rail-neer'};
-test('tariff calculation covers meal categories, quantities and water sizes',()=>{assert.equal(verifyPurchase(purchase).difference,70);assert.equal(verifyPurchase({...purchase,quantity:2}).status,'within');assert.equal(verifyPurchase({...purchase,itemId:'water-1l',amount:20}).difference,6);assert.equal(verifyPurchase({...purchase,itemId:'water-500',amount:9}).difference,0);assert.equal(verifyPurchase({...purchase,category:'other'}).status,'review');assert.equal(verifyPurchase({...purchase,itemId:'water-1l',brand:'other'}).status,'review');for(const amount of[-1,0,'abc',Infinity,10001,1.234])assert.throws(()=>verifyPurchase({...purchase,amount}));});
-test('OCR suggestions require confirmation and do not mistake the listed rate for total paid',()=>{const parsed=extractReceipt('STANDARD VEG MEAL\nRATE 80\nTOTAL PAID Rs 150.00');assert.equal(parsed.amount,150);assert.equal(parsed.itemId,'veg-meal');assert.equal(parsed.needsConfirmation,true);assert.equal(extractReceipt('PNR 1234567890\nRate 80').amount,null);});
-test('report API verifies consent, persists records, protects dashboard and retries idempotently',async()=>{const app=createApplication({database:':memory:',adminToken:'test-key'});await new Promise(resolve=>app.server.listen(0,'127.0.0.1',resolve));const base=`http://127.0.0.1:${app.server.address().port}`;const input={...purchase,id:'test-request-12345',trainNumber:'12622',consent:true};async function post(data){return fetch(base+'/api/reports',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});}try{assert.equal((await post({...input,consent:false})).status,400);let res=await post(input);assert.equal(res.status,201);assert.equal((await res.json()).officiallyFiled,false);res=await post(input);assert.equal(res.status,201);assert.equal((await post({...input,amount:180})).status,409);assert.equal((await fetch(base+'/api/admin/reports')).status,401);const data=await(await fetch(base+'/api/admin/reports',{headers:{Authorization:'Bearer test-key'}})).json();assert.equal(data.reports.length,1);assert.equal(data.reports[0].verification.difference,70);assert.equal((await fetch(base+'/api/ocr',{method:'POST',headers:{'Content-Type':'image/png'},body:'not an image'})).status,400);assert.equal((await fetch(base+'/webhooks/whatsapp',{method:'POST',body:'{}'})).status,403);}finally{await app.close();}});
-test('WhatsApp signature and text-to-consented-report flow reject tampering and duplicate events',async()=>{const raw=Buffer.from('{"ok":true}');const signature='sha256='+createHmac('sha256','secret').update(raw).digest('hex');assert.equal(validSignature(raw,signature,'secret'),true);assert.equal(validSignature(Buffer.from('changed'),signature,'secret'),false);const store=createStore(':memory:');const sent=[];const reports=[];const handle=createWhatsApp({config:{appSecret:'secret'},store,createReport:input=>{reports.push(input);return{id:input.id,trainNumber:input.trainNumber,verification:verifyPurchase(input),createdAt:new Date().toISOString()};},ocr:async()=>({}),send:async(to,text)=>sent.push(text)});try{await handle({id:'m1',from:'test-phone',type:'text',text:{body:'VEG 150 MAIL'}});assert.match(sent.at(-1),/70/);await handle({id:'m2',from:'test-phone',type:'text',text:{body:'REPORT 12622'}});assert.equal(reports.length,0);await handle({id:'m3',from:'test-phone',type:'text',text:{body:'CONFIRM'}});assert.equal(reports.length,1);assert.equal(reports[0].consent,true);await handle({id:'m3',from:'test-phone',type:'text',text:{body:'CONFIRM'}});assert.equal(reports.length,1);assert.equal(store.db.prepare('SELECT count(*) as n FROM conversations').get().n,1);assert.doesNotMatch(JSON.stringify(store.getConversation(createHmac('sha256','secret').update('test-phone').digest('hex'))),/test-phone/);}finally{store.close();}});
+import test from "node:test";
+import assert from "node:assert/strict";
+import { createHmac } from "node:crypto";
+import { verifyPurchase, extractReceipt } from "../public/engine.mjs";
+import { createApplication } from "../server.mjs";
+import { validSignature, createWhatsApp } from "../lib/whatsapp.mjs";
+import { createStore } from "../lib/store.mjs";
+const purchase = {
+  itemId: "veg-meal",
+  amount: 150,
+  quantity: 1,
+  category: "mail-express",
+  brand: "rail-neer",
+};
+test("tariff calculation covers meal categories, quantities and water sizes", () => {
+  assert.equal(verifyPurchase(purchase).difference, 70);
+  assert.equal(verifyPurchase({ ...purchase, quantity: 2 }).status, "within");
+  assert.equal(
+    verifyPurchase({ ...purchase, itemId: "water-1l", amount: 20 }).difference,
+    6,
+  );
+  assert.equal(
+    verifyPurchase({ ...purchase, itemId: "water-500", amount: 9 }).difference,
+    0,
+  );
+  assert.equal(
+    verifyPurchase({ ...purchase, category: "other" }).status,
+    "review",
+  );
+  assert.equal(
+    verifyPurchase({ ...purchase, itemId: "water-1l", brand: "other" }).status,
+    "review",
+  );
+  for (const amount of [-1, 0, "abc", Infinity, 10001, 1.234])
+    assert.throws(() => verifyPurchase({ ...purchase, amount }));
+});
+test("OCR suggestions require confirmation and do not mistake the listed rate for total paid", () => {
+  const parsed = extractReceipt(
+    "STANDARD VEG MEAL\nRATE 80\nTOTAL PAID Rs 150.00",
+  );
+  assert.equal(parsed.amount, 150);
+  assert.equal(parsed.itemId, "veg-meal");
+  assert.equal(parsed.needsConfirmation, true);
+  assert.equal(extractReceipt("PNR 1234567890\nRate 80").amount, null);
+});
+test("report API verifies consent, persists records, protects dashboard and retries idempotently", async () => {
+  const app = createApplication({
+    database: ":memory:",
+    adminToken: "test-key",
+  });
+  await new Promise((resolve) => app.server.listen(0, "127.0.0.1", resolve));
+  const base = `http://127.0.0.1:${app.server.address().port}`;
+  const input = {
+    ...purchase,
+    id: "test-request-12345",
+    trainNumber: "12622",
+    consent: true,
+  };
+  async function post(data) {
+    return fetch(base + "/api/reports", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+  }
+  try {
+    assert.equal((await post({ ...input, consent: false })).status, 400);
+    let res = await post(input);
+    assert.equal(res.status, 201);
+    assert.equal((await res.json()).officiallyFiled, false);
+    res = await post(input);
+    assert.equal(res.status, 201);
+    assert.equal((await post({ ...input, amount: 180 })).status, 409);
+    assert.equal((await fetch(base + "/api/admin/reports")).status, 401);
+    const data = await (
+      await fetch(base + "/api/admin/reports", {
+        headers: { Authorization: "Bearer test-key" },
+      })
+    ).json();
+    assert.equal(data.reports.length, 1);
+    assert.equal(data.reports[0].verification.difference, 70);
+    assert.equal(
+      (
+        await fetch(base + "/api/ocr", {
+          method: "POST",
+          headers: { "Content-Type": "image/png" },
+          body: "not an image",
+        })
+      ).status,
+      400,
+    );
+    assert.equal(
+      (await fetch(base + "/webhooks/whatsapp", { method: "POST", body: "{}" }))
+        .status,
+      403,
+    );
+  } finally {
+    await app.close();
+  }
+});
+test("WhatsApp signature and text-to-consented-report flow reject tampering and duplicate events", async () => {
+  const raw = Buffer.from('{"ok":true}');
+  const signature =
+    "sha256=" + createHmac("sha256", "secret").update(raw).digest("hex");
+  assert.equal(validSignature(raw, signature, "secret"), true);
+  assert.equal(
+    validSignature(Buffer.from("changed"), signature, "secret"),
+    false,
+  );
+  const store = createStore(":memory:");
+  const sent = [];
+  const reports = [];
+  const handle = createWhatsApp({
+    config: { appSecret: "secret" },
+    store,
+    createReport: (input) => {
+      reports.push(input);
+      return {
+        id: input.id,
+        trainNumber: input.trainNumber,
+        verification: verifyPurchase(input),
+        createdAt: new Date().toISOString(),
+      };
+    },
+    ocr: async () => ({}),
+    send: async (to, text) => sent.push(text),
+  });
+  try {
+    await handle({
+      id: "m1",
+      from: "test-phone",
+      type: "text",
+      text: { body: "VEG 150 MAIL" },
+    });
+    assert.match(sent.at(-1), /70/);
+    await handle({
+      id: "m2",
+      from: "test-phone",
+      type: "text",
+      text: { body: "REPORT 12622" },
+    });
+    assert.equal(reports.length, 0);
+    await handle({
+      id: "m3",
+      from: "test-phone",
+      type: "text",
+      text: { body: "CONFIRM" },
+    });
+    assert.equal(reports.length, 1);
+    assert.equal(reports[0].consent, true);
+    await handle({
+      id: "m3",
+      from: "test-phone",
+      type: "text",
+      text: { body: "CONFIRM" },
+    });
+    assert.equal(reports.length, 1);
+    assert.equal(
+      store.db.prepare("SELECT count(*) as n FROM conversations").get().n,
+      1,
+    );
+    assert.doesNotMatch(
+      JSON.stringify(
+        store.getConversation(
+          createHmac("sha256", "secret").update("test-phone").digest("hex"),
+        ),
+      ),
+      /test-phone/,
+    );
+  } finally {
+    store.close();
+  }
+});

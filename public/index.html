@@ -1,14 +1,526 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#123D32"><meta name="description" content="Check railway meal and water prices against published tariffs. Prepare an evidence-backed report with your approval."><title>RailVerify — Travel with clarity</title><link rel="stylesheet" href="/styles.css"><link rel="manifest" href="/manifest.webmanifest"></head><body>
-<aside class="sidebar"><a class="brand" href="/" aria-label="RailVerify home"><span class="brand-mark">R<span>✓</span></span><span>RailVerify<small>TRAVEL WITH CLARITY</small></span></a><div class="nav-label">YOUR JOURNEY</div><nav><a class="nav-link active" href="/" data-nav="check"><span data-icon="shield"></span> Price check</a><a class="nav-link" href="/dashboard" data-nav="dashboard"><span data-icon="chart"></span> Compliance desk</a><button class="nav-link" id="sources-nav"><span data-icon="book"></span> Official sources</button></nav><div class="sidebar-bottom"><span class="small-check">✓</span><p>A clearer price.<br>A calmer journey.</p><small>Independent student prototype<br>SBI Youth Ideathon 2026</small><div class="sidebar-uid">UID 127373</div></div></aside>
-<div class="shell"><header class="topbar"><button class="mobile-brand" id="mobile-home">RailVerify</button><div class="breadcrumb" id="breadcrumb">Passenger tools <span>/</span> Price check</div><div class="top-actions"><span class="connection" id="connection"><i></i> Online</span><label class="language-label"><span data-icon="globe"></span><select id="language" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="ta">தமிழ்</option></select></label></div></header>
-<main id="passenger-page"><section class="page-heading"><div><div class="eyebrow">A LITTLE CLARITY GOES A LONG WAY</div><h1 data-i18n="headline">Know the price.<br><em>Enjoy the journey.</em></h1><p class="intro" data-i18n="intro">Your meal. Your money. Check the published tariff<br class="desktop-only"> before deciding what to do next.</p></div><div class="journey-note"><span data-icon="ticket"></span><span>Built for the moment<br>you ask, <strong>“Is this right?”</strong></span></div></section>
-<div class="workspace"><section class="check-panel" aria-label="Check a purchase"><div class="panel-heading"><span class="step-label">01 / YOUR PURCHASE</span><span class="source-tag"><i></i> Official tariff references</span></div><div class="purchase-tabs" role="tablist" aria-label="Purchase type"><button id="meal-tab" class="selected" role="tab" aria-selected="true"><span data-icon="meal"></span><span data-i18n="meals">Train meals</span></button><button id="water-tab" role="tab" aria-selected="false"><span data-icon="water"></span><span data-i18n="water">Bottled water</span></button></div>
-<form id="check-form"><label class="field-label" for="item" data-i18n="item">What did you buy?</label><select id="item" name="itemId"></select><div class="field-row"><div><label class="field-label" for="amount" data-i18n="paid">Total amount paid</label><div class="amount-field"><span>₹</span><input id="amount" name="amount" inputmode="decimal" type="number" min="0.01" max="10000" step="0.01" placeholder="150" required></div></div><div class="quantity-field"><label class="field-label" for="quantity" data-i18n="quantity">Quantity</label><input id="quantity" type="number" min="1" max="100" value="1" required></div></div><div id="category-field"><label class="field-label" for="category">Your catering service</label><select id="category"><option value="mail-express">Standard Mail / Express meal, sold separately</option><option value="other">Premium / prepaid / restaurant / unsure</option></select></div><div id="brand-field" hidden><label class="field-label" for="brand">Bottle brand</label><select id="brand"><option value="rail-neer">Rail Neer</option><option value="other">Another brand / unsure</option></select></div><button type="submit" class="primary-button" id="verify-button"><span data-i18n="verify">Check the listed price</span><span data-icon="arrow"></span></button><p class="form-error" id="check-error" role="alert"></p></form>
-<div class="upload-divider"><span>or start with your bill</span></div><label class="upload-box" for="bill-file"><span data-icon="scan"></span><span><strong id="upload-title">Upload a bill photo</strong><small>JPG, PNG or WebP · up to 5 MB</small></span><span class="upload-arrow">↗</span></label><input type="file" id="bill-file" accept="image/png,image/jpeg,image/webp" hidden><p class="scan-note" id="scan-note">OCR suggests details. You confirm them before checking.</p><details class="ocr-details" id="ocr-details" hidden><summary>Review extracted bill text</summary><pre id="ocr-text"></pre></details></section>
-<section class="result-panel" aria-live="polite" aria-label="Your price comparison"><div class="result-topline"><span class="step-label">02 / YOUR CLARITY</span><span id="preview-badge">ILLUSTRATIVE EXAMPLE</span></div><div class="chat-window"><div class="chat-header"><div class="chat-avatar">R<span>✓</span></div><div><strong>RailVerify</strong><small>Price checks, made simple</small></div><span class="chat-menu">···</span></div><div class="chat-body"><div class="chat-date" id="chat-date">A QUICK PRICE CHECK</div><div class="bubble sent" id="sent-message">Standard veg meal. I paid ₹150.<small>YOU · SAMPLE</small></div><div class="bubble received"><div class="answer-status"><span id="answer-symbol">↗</span><span id="answer-status">Above the listed tariff</span></div><div class="comparison"><div><small data-i18n="paidLabel">YOU PAID</small><strong id="paid-value">₹150</strong></div><span class="compare-separator"></span><div><small data-i18n="listedLabel">LISTED TOTAL</small><strong id="listed-value">₹80</strong></div></div><div class="difference" id="difference">That is ₹70 above the listed tariff.</div><p id="answer-note">For a confirmed standard vegetarian meal on a covered Mail/Express service.</p><a id="source-link" href="#" target="_blank" rel="noopener noreferrer"><span data-icon="book"></span> View official tariff <span>↗</span></a></div><div class="chat-footnote">Your decision comes next.</div></div></div><div class="result-actions"><button class="report-button" id="prepare-report" disabled><span data-icon="document"></span><span data-i18n="prepare">Prepare a report</span></button><button class="audio-button" id="read-answer" aria-label="Read the answer aloud"><span data-icon="speaker"></span></button></div><p id="result-disclosure">Try a price check to prepare your own report. The example above uses a hypothetical payment.</p></section></div>
-<section class="under-workspace"><button class="sample-link" id="sample-example">Try the ₹150 meal example <span>↗</span></button><div><span data-icon="lock"></span> No PNR needed for a price check.</div><div class="queue-state" id="queue-state" hidden><button id="sync-queue">Sync saved reports</button><button id="clear-queue">Discard saved reports</button></div></section><section class="trust-strip"><div><span class="trust-number">01</span><p><strong>Published prices</strong><span>Sources beside every supported comparison.</span></p></div><div><span class="trust-number">02</span><p><strong>You stay in control</strong><span>Review the details before you report.</span></p></div><div><span class="trust-number">03</span><p><strong>A lighter journey</strong><span>Text checks remain available after offline setup.</span></p></div></section><div class="scope-note">Independent prototype. This service helps compare confirmed purchases. Official complaints follow RailMadad’s process. Water photos cannot establish authenticity or water quality.</div></main>
-<main id="dashboard-page" hidden><section class="page-heading dashboard-heading"><div><div class="eyebrow">FROM INDIVIDUAL REPORTS TO REPEATED PATTERNS</div><h1>The compliance<br><em>desk.</em></h1><p class="intro">A clearer picture of where a closer look is needed.</p></div><button class="outline-button" id="export-csv"><span data-icon="download"></span> Export CSV</button></section><div class="dashboard-toolbar"><div class="data-tabs"><button class="selected" id="demo-data">Illustrative data</button><button id="local-data">Local reports</button></div><span class="demo-label" id="dataset-label">DEMO RECORDS · NOT REAL INCIDENTS</span></div><form class="admin-login" id="admin-login" hidden><label for="admin-key">Dashboard access key</label><input type="password" id="admin-key" autocomplete="off" placeholder="Enter your configured access key"><button class="primary-button" type="submit">Unlock local reports</button><p id="admin-error" class="form-error" role="alert"></p><small id="demo-admin-hint"></small></form>
-<div class="metric-grid"><article><span>Reports in view</span><strong id="metric-reports">24</strong><small>Consented records</small></article><article><span>Above listed tariff</span><strong id="metric-above">18</strong><small>Purchase comparisons</small></article><article><span>Reported price difference</span><strong id="metric-value">₹1,020</strong><small>Potential excess, subject to review</small></article><article class="metric-dark"><span>Official filing</span><strong>Passenger-led</strong><small>Local records are not RailMadad grievances</small></article></div><section class="dashboard-grid"><article class="patterns-panel"><div class="section-heading"><h2>Where reports repeat</h2><span>By train</span></div><div id="train-bars"></div><p>Counts indicate reports in this dataset. They do not establish prevalence or vendor wrongdoing.</p></article><article class="insight-panel"><span class="step-label">A BETTER QUESTION</span><h2>Which service<br>needs a<br>closer look?</h2><p>Use the source, confirmed purchase and vendor reference together before taking action.</p><span class="review-stamp">Human review required</span></article></section><section class="reports-table-panel"><div class="section-heading"><h2>Purchase reports</h2><div class="table-filters"><input type="search" id="report-search" placeholder="Search train or vendor" aria-label="Search train or vendor"><select id="report-status" aria-label="Filter report status"><option value="all">All comparisons</option><option value="above">Above tariff</option><option value="within">Within tariff</option><option value="review">Needs review</option></select></div></div><div class="table-scroll"><table><thead><tr><th>Train / vendor reference</th><th>Purchase</th><th>Paid / listed</th><th>Comparison</th><th>Local record</th></tr></thead><tbody id="reports-body"></tbody></table></div><p class="empty-state" id="empty-reports" hidden>No reports match this view.</p></section></main>
-<footer>RailVerify <span>Built by Crack The Puzzle · UID 127373</span><button id="footer-sources">Sources & scope</button></footer></div>
-<dialog id="report-dialog"><button class="dialog-close" id="close-report" aria-label="Close report">×</button><div class="eyebrow">YOUR PURCHASE. YOUR APPROVAL.</div><h2>Prepare your report</h2><p class="dialog-intro">Create a local evidence summary, then complete the official RailMadad process.</p><form id="report-form"><label class="field-label" for="train-number">Five-digit train number</label><input id="train-number" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="12345" required><label class="field-label" for="vendor-id">Vendor ID or bill reference <span>(optional)</span></label><input id="vendor-id" maxlength="80" placeholder="Use the actual reference if available"><label class="field-label" for="report-description">Anything else? <span>(optional)</span></label><textarea id="report-description" maxlength="2000" rows="2" placeholder="Keep the description factual."></textarea><button type="button" class="location-button" id="add-location"><span data-icon="pin"></span> Add my current location <span>optional</span></button><p id="location-state" class="scan-note"></p><label class="consent"><input type="checkbox" id="consent" required><span>I approve storing this purchase, train number and any details I enter as a local report. I understand official filing is a separate step.</span></label><button type="submit" class="primary-button" id="save-report">Create my report <span data-icon="arrow"></span></button><p class="form-error" id="report-error" role="alert"></p></form><div id="report-success" hidden><div class="success-mark">✓</div><h3 id="report-success-title">Your report is prepared</h3><p id="report-success-copy"></p><p class="report-reference" id="report-reference"></p><button class="primary-button" id="download-report"><span data-icon="download"></span> Download evidence summary</button><a class="official-link" id="open-railmadad" target="_blank" rel="noopener noreferrer">Continue on official RailMadad ↗</a><small>The official portal may request your mobile OTP and PNR / journey details. RailVerify cannot guarantee anonymity within that process.</small></div></dialog>
-<dialog id="sources-dialog"><button class="dialog-close" id="close-sources" aria-label="Close sources">×</button><div class="eyebrow">KNOW WHAT SUPPORTS THE ANSWER</div><h2>Sources & scope</h2><div id="sources-list"></div><p class="source-scope">This limited prototype supports standard Mail/Express meal categories and Rail Neer sizes. Other services and brand authorization need manual review. Reference documents can become outdated. Confirm applicable current tariffs before escalation.</p></dialog><div id="toast" class="toast" role="status" hidden></div><script type="module" src="/app.mjs"></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#123D32" />
+    <meta
+      name="description"
+      content="Check railway meal and water prices against published tariffs. Prepare an evidence-backed report with your approval."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>RailVerify — Travel with clarity</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="RailVerify home"
+        ><span class="brand-mark">R<span>✓</span></span
+        ><span>RailVerify<small>TRAVEL WITH CLARITY</small></span></a
+      >
+      <div class="nav-label">YOUR JOURNEY</div>
+      <nav>
+        <a class="nav-link active" href="/" data-nav="check"
+          ><span data-icon="shield"></span> Price check</a
+        ><a class="nav-link" href="/dashboard" data-nav="dashboard"
+          ><span data-icon="chart"></span> Compliance desk</a
+        ><button class="nav-link" id="sources-nav">
+          <span data-icon="book"></span> Official sources
+        </button>
+      </nav>
+      <div class="sidebar-bottom">
+        <span class="small-check">✓</span>
+        <p>A clearer price.<br />A calmer journey.</p>
+        <small
+          >Independent student prototype<br />SBI Youth Ideathon 2026</small
+        >
+        <div class="sidebar-uid">UID 127373</div>
+      </div>
+    </aside>
+    <div class="shell">
+      <header class="topbar">
+        <button class="mobile-brand" id="mobile-home">RailVerify</button>
+        <div class="breadcrumb" id="breadcrumb">
+          Passenger tools <span>/</span> Price check
+        </div>
+        <div class="top-actions">
+          <a
+            class="mobile-desk"
+            href="/dashboard"
+            data-nav="dashboard"
+            aria-label="Open compliance desk"
+            ><span data-icon="chart"></span
+          ></a>
+          <span class="connection" id="connection"><i></i> Online</span
+          ><label class="language-label"
+            ><span data-icon="globe"></span
+            ><select id="language" aria-label="Language">
+              <option value="en">English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="ta">தமிழ்</option>
+            </select></label
+          >
+        </div>
+      </header>
+      <main id="passenger-page">
+        <section class="page-heading">
+          <div>
+            <div class="eyebrow">A LITTLE CLARITY GOES A LONG WAY</div>
+            <h1 data-i18n="headline">
+              Know the price.<br /><em>Enjoy the journey.</em>
+            </h1>
+            <p class="intro" data-i18n="intro">
+              Your meal. Your money. Check the published tariff<br
+                class="desktop-only"
+              />
+              before deciding what to do next.
+            </p>
+          </div>
+          <div class="journey-note">
+            <span data-icon="ticket"></span
+            ><span
+              >Built for the moment<br />you ask,
+              <strong>“Is this right?”</strong></span
+            >
+          </div>
+        </section>
+        <div class="workspace">
+          <section class="check-panel" aria-label="Check a purchase">
+            <div class="panel-heading">
+              <span class="step-label">01 / YOUR PURCHASE</span
+              ><span class="source-tag"
+                ><i></i> Official tariff references</span
+              >
+            </div>
+            <div
+              class="purchase-tabs"
+              role="tablist"
+              aria-label="Purchase type"
+            >
+              <button
+                id="meal-tab"
+                class="selected"
+                role="tab"
+                aria-selected="true"
+              >
+                <span data-icon="meal"></span
+                ><span data-i18n="meals">Train meals</span></button
+              ><button id="water-tab" role="tab" aria-selected="false">
+                <span data-icon="water"></span
+                ><span data-i18n="water">Bottled water</span>
+              </button>
+            </div>
+            <form id="check-form">
+              <label class="field-label" for="item" data-i18n="item"
+                >What did you buy?</label
+              ><select id="item" name="itemId"></select>
+              <div class="field-row">
+                <div>
+                  <label class="field-label" for="amount" data-i18n="paid"
+                    >Total amount paid</label
+                  >
+                  <div class="amount-field">
+                    <span>₹</span
+                    ><input
+                      id="amount"
+                      name="amount"
+                      inputmode="decimal"
+                      type="number"
+                      min="0.01"
+                      max="10000"
+                      step="0.01"
+                      placeholder="150"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="quantity-field">
+                  <label class="field-label" for="quantity" data-i18n="quantity"
+                    >Quantity</label
+                  ><input
+                    id="quantity"
+                    type="number"
+                    min="1"
+                    max="100"
+                    value="1"
+                    required
+                  />
+                </div>
+              </div>
+              <div id="category-field">
+                <label class="field-label" for="category"
+                  >Your catering service</label
+                ><select id="category">
+                  <option value="mail-express">
+                    Standard Mail / Express meal, sold separately
+                  </option>
+                  <option value="other">
+                    Premium / prepaid / restaurant / unsure
+                  </option>
+                </select>
+              </div>
+              <div id="brand-field" hidden>
+                <label class="field-label" for="brand">Bottle brand</label
+                ><select id="brand">
+                  <option value="rail-neer">Rail Neer</option>
+                  <option value="other">Another brand / unsure</option>
+                </select>
+              </div>
+              <button type="submit" class="primary-button" id="verify-button">
+                <span data-i18n="verify">Check the listed price</span
+                ><span data-icon="arrow"></span>
+              </button>
+              <p class="form-error" id="check-error" role="alert"></p>
+            </form>
+            <div class="upload-divider">
+              <span>or start with your bill</span>
+            </div>
+            <label class="upload-box" for="bill-file"
+              ><span data-icon="scan"></span
+              ><span
+                ><strong id="upload-title">Upload a bill photo</strong
+                ><small>JPG, PNG or WebP · up to 5 MB</small></span
+              ><span class="upload-arrow">↗</span></label
+            ><input
+              type="file"
+              id="bill-file"
+              accept="image/png,image/jpeg,image/webp"
+              hidden
+            />
+            <p class="scan-note" id="scan-note">
+              OCR suggests details. You confirm them before checking.
+            </p>
+            <details class="ocr-details" id="ocr-details" hidden>
+              <summary>Review extracted bill text</summary>
+              <pre id="ocr-text"></pre>
+            </details>
+          </section>
+          <section
+            class="result-panel"
+            aria-live="polite"
+            aria-label="Your price comparison"
+          >
+            <div class="result-topline">
+              <span class="step-label">02 / YOUR CLARITY</span
+              ><span id="preview-badge">ILLUSTRATIVE EXAMPLE</span>
+            </div>
+            <div class="chat-window">
+              <div class="chat-header">
+                <div class="chat-avatar">R<span>✓</span></div>
+                <div>
+                  <strong>RailVerify</strong
+                  ><small>Price checks, made simple</small>
+                </div>
+                <span class="chat-menu">···</span>
+              </div>
+              <div class="chat-body">
+                <div class="chat-date" id="chat-date">A QUICK PRICE CHECK</div>
+                <div class="bubble sent" id="sent-message">
+                  Standard veg meal. I paid ₹150.<small>YOU · SAMPLE</small>
+                </div>
+                <div class="bubble received">
+                  <div class="answer-status">
+                    <span id="answer-symbol">↗</span
+                    ><span id="answer-status">Above the listed tariff</span>
+                  </div>
+                  <div class="comparison">
+                    <div>
+                      <small data-i18n="paidLabel">YOU PAID</small
+                      ><strong id="paid-value">₹150</strong>
+                    </div>
+                    <span class="compare-separator"></span>
+                    <div>
+                      <small data-i18n="listedLabel">LISTED TOTAL</small
+                      ><strong id="listed-value">₹80</strong>
+                    </div>
+                  </div>
+                  <div class="difference" id="difference">
+                    That is ₹70 above the listed tariff.
+                  </div>
+                  <p id="answer-note">
+                    For a confirmed standard vegetarian meal on a covered
+                    Mail/Express service.
+                  </p>
+                  <a
+                    id="source-link"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    ><span data-icon="book"></span> View official tariff
+                    <span>↗</span></a
+                  >
+                </div>
+                <div class="chat-footnote">Your decision comes next.</div>
+              </div>
+            </div>
+            <div class="result-actions">
+              <button class="report-button" id="prepare-report" disabled>
+                <span data-icon="document"></span
+                ><span data-i18n="prepare">Prepare a report</span></button
+              ><button
+                class="audio-button"
+                id="read-answer"
+                aria-label="Read the answer aloud"
+              >
+                <span data-icon="speaker"></span>
+              </button>
+            </div>
+            <p id="result-disclosure">
+              Try a price check to prepare your own report. The example above
+              uses a hypothetical payment.
+            </p>
+          </section>
+        </div>
+        <section class="under-workspace">
+          <button class="sample-link" id="sample-example">
+            Try the ₹150 meal example <span>↗</span>
+          </button>
+          <div>
+            <span data-icon="lock"></span> No PNR needed for a price check.
+          </div>
+          <div class="queue-state" id="queue-state" hidden>
+            <button id="sync-queue">Sync saved reports</button
+            ><button id="clear-queue">Discard saved reports</button>
+          </div>
+        </section>
+        <section class="trust-strip">
+          <div>
+            <span class="trust-number">01</span>
+            <p>
+              <strong>Published prices</strong
+              ><span>Sources beside every supported comparison.</span>
+            </p>
+          </div>
+          <div>
+            <span class="trust-number">02</span>
+            <p>
+              <strong>You stay in control</strong
+              ><span>Review the details before you report.</span>
+            </p>
+          </div>
+          <div>
+            <span class="trust-number">03</span>
+            <p>
+              <strong>A lighter journey</strong
+              ><span>Text checks remain available after offline setup.</span>
+            </p>
+          </div>
+        </section>
+        <div class="scope-note">
+          Independent prototype. This service helps compare confirmed purchases.
+          Official complaints follow RailMadad’s process. Water photos cannot
+          establish authenticity or water quality.
+        </div>
+      </main>
+      <main id="dashboard-page" hidden>
+        <section class="page-heading dashboard-heading">
+          <div>
+            <div class="eyebrow">
+              FROM INDIVIDUAL REPORTS TO REPEATED PATTERNS
+            </div>
+            <h1>The compliance<br /><em>desk.</em></h1>
+            <p class="intro">
+              A clearer picture of where a closer look is needed.
+            </p>
+          </div>
+          <button class="outline-button" id="export-csv">
+            <span data-icon="download"></span> Export CSV
+          </button>
+        </section>
+        <div class="dashboard-toolbar">
+          <div class="data-tabs">
+            <button class="selected" id="demo-data">Illustrative data</button
+            ><button id="local-data">Local reports</button>
+          </div>
+          <span class="demo-label" id="dataset-label"
+            >DEMO RECORDS · NOT REAL INCIDENTS</span
+          >
+        </div>
+        <form class="admin-login" id="admin-login" hidden>
+          <label for="admin-key">Dashboard access key</label
+          ><input
+            type="password"
+            id="admin-key"
+            autocomplete="off"
+            placeholder="Enter your configured access key"
+          /><button class="primary-button" type="submit">
+            Unlock local reports
+          </button>
+          <p id="admin-error" class="form-error" role="alert"></p>
+          <small id="demo-admin-hint"></small>
+        </form>
+        <div class="metric-grid">
+          <article>
+            <span>Reports in view</span><strong id="metric-reports">24</strong
+            ><small>Consented records</small>
+          </article>
+          <article>
+            <span>Above listed tariff</span><strong id="metric-above">18</strong
+            ><small>Purchase comparisons</small>
+          </article>
+          <article>
+            <span>Reported price difference</span
+            ><strong id="metric-value">₹1,020</strong
+            ><small>Potential excess, subject to review</small>
+          </article>
+          <article class="metric-dark">
+            <span>Official filing</span><strong>Passenger-led</strong
+            ><small>Local records are not RailMadad grievances</small>
+          </article>
+        </div>
+        <section class="dashboard-grid">
+          <article class="patterns-panel">
+            <div class="section-heading">
+              <h2>Where reports repeat</h2>
+              <span>By train</span>
+            </div>
+            <div id="train-bars"></div>
+            <p>
+              Counts indicate reports in this dataset. They do not establish
+              prevalence or vendor wrongdoing.
+            </p>
+          </article>
+          <article class="insight-panel">
+            <span class="step-label">A BETTER QUESTION</span>
+            <h2>Which service<br />needs a<br />closer look?</h2>
+            <p>
+              Use the source, confirmed purchase and vendor reference together
+              before taking action.
+            </p>
+            <span class="review-stamp">Human review required</span>
+          </article>
+        </section>
+        <section class="reports-table-panel">
+          <div class="section-heading">
+            <h2>Purchase reports</h2>
+            <div class="table-filters">
+              <input
+                type="search"
+                id="report-search"
+                placeholder="Search train or vendor"
+                aria-label="Search train or vendor"
+              /><select id="report-status" aria-label="Filter report status">
+                <option value="all">All comparisons</option>
+                <option value="above">Above tariff</option>
+                <option value="within">Within tariff</option>
+                <option value="review">Needs review</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Train / vendor reference</th>
+                  <th>Purchase</th>
+                  <th>Paid / listed</th>
+                  <th>Comparison</th>
+                  <th>Local record</th>
+                </tr>
+              </thead>
+              <tbody id="reports-body"></tbody>
+            </table>
+          </div>
+          <p class="empty-state" id="empty-reports" hidden>
+            No reports match this view.
+          </p>
+        </section>
+      </main>
+      <footer>
+        RailVerify <span>Built by Crack The Puzzle · UID 127373</span
+        ><button id="footer-sources">Sources & scope</button>
+      </footer>
+    </div>
+    <dialog id="report-dialog">
+      <button class="dialog-close" id="close-report" aria-label="Close report">
+        ×
+      </button>
+      <div class="eyebrow">YOUR PURCHASE. YOUR APPROVAL.</div>
+      <h2>Prepare your report</h2>
+      <p class="dialog-intro">
+        Create a local evidence summary, then complete the official RailMadad
+        process.
+      </p>
+      <form id="report-form">
+        <label class="field-label" for="train-number"
+          >Five-digit train number</label
+        ><input
+          id="train-number"
+          inputmode="numeric"
+          pattern="[0-9]{5}"
+          maxlength="5"
+          placeholder="12345"
+          required
+        /><label class="field-label" for="vendor-id"
+          >Vendor ID or bill reference <span>(optional)</span></label
+        ><input
+          id="vendor-id"
+          maxlength="80"
+          placeholder="Use the actual reference if available"
+        /><label class="field-label" for="report-description"
+          >Anything else? <span>(optional)</span></label
+        ><textarea
+          id="report-description"
+          maxlength="2000"
+          rows="2"
+          placeholder="Keep the description factual."
+        ></textarea
+        ><button type="button" class="location-button" id="add-location">
+          <span data-icon="pin"></span> Add my current location
+          <span>optional</span>
+        </button>
+        <p id="location-state" class="scan-note"></p>
+        <label class="consent"
+          ><input type="checkbox" id="consent" required /><span
+            >I approve storing this purchase, train number and any details I
+            enter as a local report. I understand official filing is a separate
+            step.</span
+          ></label
+        ><button type="submit" class="primary-button" id="save-report">
+          Create my report <span data-icon="arrow"></span>
+        </button>
+        <p class="form-error" id="report-error" role="alert"></p>
+      </form>
+      <div id="report-success" hidden>
+        <div class="success-mark">✓</div>
+        <h3 id="report-success-title">Your report is prepared</h3>
+        <p id="report-success-copy"></p>
+        <p class="report-reference" id="report-reference"></p>
+        <button class="primary-button" id="download-report">
+          <span data-icon="download"></span> Download evidence summary</button
+        ><a
+          class="official-link"
+          id="open-railmadad"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Continue on official RailMadad ↗</a
+        ><small
+          >The official portal may request your mobile OTP and PNR / journey
+          details. RailVerify cannot guarantee anonymity within that
+          process.</small
+        >
+      </div>
+    </dialog>
+    <dialog id="sources-dialog">
+      <button
+        class="dialog-close"
+        id="close-sources"
+        aria-label="Close sources"
+      >
+        ×
+      </button>
+      <div class="eyebrow">KNOW WHAT SUPPORTS THE ANSWER</div>
+      <h2>Sources & scope</h2>
+      <div id="sources-list"></div>
+      <p class="source-scope">
+        This limited prototype supports standard Mail/Express meal categories
+        and Rail Neer sizes. Other services and brand authorization need manual
+        review. Reference documents can become outdated. Confirm applicable
+        current tariffs before escalation.
+      </p>
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <script type="module" src="/app.mjs"></script>
+  </body>
+</html>
