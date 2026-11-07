@@ -506,7 +506,9 @@ function renderDashboard() {
     .join("");
   $("empty-reports").hidden = view.length > 0;
 }
+let datasetRequest = 0;
 async function setDataset(value) {
+  const request = ++datasetRequest;
   dataset = value;
   $("demo-data").classList.toggle("selected", value === "demo");
   $("local-data").classList.toggle("selected", value === "local");
@@ -514,7 +516,7 @@ async function setDataset(value) {
     value === "demo"
       ? "DEMO RECORDS · NOT REAL INCIDENTS"
       : "LOCAL RECORDS · NOT OFFICIAL GRIEVANCES";
-  $("admin-login").hidden = value === "demo" || !!adminKey;
+  $("admin-login").hidden = value === "demo";
   if (value === "demo") {
     rows = demoRows;
     renderDashboard();
@@ -523,15 +525,22 @@ async function setDataset(value) {
   rows = [];
   renderDashboard();
   if (adminKey) {
+    $("dataset-label").textContent = "Loading local reports…";
     try {
       const data = await api("/api/admin/reports", {
         headers: { Authorization: "Bearer " + adminKey },
       });
+      if (request !== datasetRequest) return;
       rows = data.reports;
+      $("dataset-label").textContent =
+        "LOCAL RECORDS · NOT OFFICIAL GRIEVANCES";
       $("admin-login").hidden = true;
       renderDashboard();
     } catch (error) {
+      if (request !== datasetRequest) return;
       adminKey = "";
+      $("dataset-label").textContent =
+        "LOCAL RECORDS · NOT OFFICIAL GRIEVANCES";
       $("admin-login").hidden = false;
       $("admin-error").textContent = error.message;
     }

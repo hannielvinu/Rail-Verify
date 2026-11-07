@@ -1,4 +1,4 @@
-const VERSION = "railverify-v1";
+const VERSION = "railverify-v2";
 const SHELL = [
   "/",
   "/dashboard",
