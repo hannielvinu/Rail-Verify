@@ -1,10 +1,10 @@
 # Latest RailVerify pitch
 
-Use **RailVerify_Cobalt_Diagrams_Final.pptx** for the latest presentation. It uses cobalt blue, white, navy and orange, with Plus Jakarta Sans headings and editable process diagrams.
+Use **RailVerify_Aptos_Final.pptx** for the latest presentation. It uses Aptos Display headings and Aptos body text, with larger workflow labels. The cobalt, white, navy and orange design includes editable process diagrams.
 
 The deck includes three native diagrams, highlight boxes for the price comparison and testing evidence, and a roadmap with aligned milestones. The original organizer opening and closing images remain embedded unchanged. Add the presenter’s own photograph inside the opening image area.
 
-Install the two fonts from **RailVerify_Cobalt_Fonts.zip** before editing the PowerPoint. This preserves the intended line wrapping. The MP4 already preserves the rendered typography.
+The latest deck uses Microsoft Aptos and Aptos Display. These fonts were available in the authoring computer’s Office font cache. If needed, install them from the official Microsoft download at https://www.microsoft.com/en-us/download/details.aspx?id=106087. The older Cobalt font archive belongs to the previous typography version.
 
 **RailVerify_Cobalt_130s_Base.mp4** is the matching silent editing base. Add your own camera footage and voice before submitting. Most slides have a reserved presenter area on the right of the video composition. The PPT itself uses the full canvas, so every diagram remains editable and easy to read.
 
